@@ -1,0 +1,167 @@
+.sudoku-board {
+  --cell-size: min(60px, calc((100vw - 32px) / var(--grid-size)));
+  display: grid;
+  grid-template-columns: repeat(var(--grid-size), var(--cell-size));
+  grid-template-rows: repeat(var(--grid-size), var(--cell-size));
+  justify-content: center;
+  margin: 30px auto;
+  width: max-content;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.sudoku-cell {
+  border: 1px solid #d5d5d5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  background-color: #fff;
+}
+
+.box-border-right {
+  border-right: 2px solid #555;
+}
+
+.box-border-bottom {
+  border-bottom: 2px solid #555;
+}
+
+.pre-filled {
+  font-weight: bold;
+  color: #46594a;
+}
+
+.filled {
+  color: #8266b0;
+  font-weight: 500;
+}
+
+.empty {
+  color: #333;
+  cursor: pointer;
+}
+
+.selected {
+  background-color: #e8def5;
+}
+
+.selected-filled {
+  background-color: #d4c2eb;
+  color: #333;
+}
+
+.number-pad {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.number-pad button {
+  width: 45px;
+  height: 45px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.game-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.reset-board,
+.check-solution {
+  min-width: 150px;
+  height: 45px;
+  padding: 10px 16px;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #e8def5;
+  border: 1px solid #d4c2eb;
+  color: #4d3b68;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.1s;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #d4c2eb;
+  transform: scale(1.05);
+}
+
+.feedback {
+  margin-top: 15px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.feedback.success {
+  color: #46594a;
+}
+
+.feedback.error {
+  color: #b04444;
+}
+
+.difficulty-selector button.active {
+  background-color: #6b4f9c;
+  color: white;
+}
+
+.grid-size-selector button.active {
+  background-color: #6b4f9c;
+  color: white;
+}
+
+.grid-size-selector,
+.difficulty-selector {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.grid-size-selector button,
+.difficulty-selector button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.difficulty-selector button.active:hover,
+.grid-size-selector button.active:hover {
+  background-color: #8266b0;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 600px) {
+    .number-pad {
+        display: grid;
+        gap: 8px;
+        width: min(100% - 32px, 400px);
+        margin: 20px auto 0;
+    }
+
+    .number-pad-9 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .number-pad-6 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .number-pad button {
+        width: 100%;
+        height: 45px;
+    }
+
+    .number-pad-6 .delete-number {
+        grid-column: 1 / -1;
+    }
+}
