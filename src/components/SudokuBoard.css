@@ -138,6 +138,15 @@ button:hover {
 .grid-size-selector button.active:hover {
   background-color: #8266b0;
 }
+.sudoku-cell.conflict {
+    background-color: #f4d6da;
+    color: #a63848;
+}
+.sudoku-cell.conflict.selected,
+.sudoku-cell.conflict.selected-filled {
+    outline: 3px solid #6b4f9c;
+    outline-offset: -3px;
+}
 
 /* Media queries for responsiveness */
 @media (max-width: 600px) {

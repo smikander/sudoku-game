@@ -2,7 +2,8 @@ import { useState } from 'react';
 import './SudokuBoard.css';
 import { generateSolvedBoard } from '../sudokuGenerator';
 import { createPuzzle } from '../sudokuPuzzle';
-import { checkSolution } from '../sudokuValidator';
+import { checkSolution, hasConflict } from '../sudokuValidator';
+
 
 function createGame(size, difficulty) {
     const solution = generateSolvedBoard(size);
@@ -16,7 +17,6 @@ function createGame(size, difficulty) {
 
     return { solution, puzzle };
 }
-
 function SudokuBoard() {
     const [gridSize, setGridSize] = useState(9);
     const [difficulty, setDifficulty] = useState('medium');
@@ -36,7 +36,6 @@ function SudokuBoard() {
         setBoard(puzzle);
         setSelectedCell(null); // Deselect any selected cell when starting a new game
     }
-
     return (
         <>
             <div className="grid-size-selector">
@@ -69,6 +68,8 @@ function SudokuBoard() {
                 {board.map((row, rowIndex) => (
                     row.map((cell, colIndex) => {
                         const cellClass = game.puzzle[rowIndex][colIndex] !== null ? 'pre-filled' : cell !== null ? 'filled' : 'empty';
+                        const conflict = cell !== null &&
+                            hasConflict(board, rowIndex, colIndex, cell);
                         const boxRows = gridSize / 3;
                         const boxCols = 3;
 
@@ -81,7 +82,7 @@ function SudokuBoard() {
                             rowIndex !== gridSize - 1;
 
                         return (
-                            <div className={`sudoku-cell ${cellClass} ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? (cell !== null ? 'selected-filled' : 'selected') : ''} ${borderRight ? 'box-border-right' : ''} ${borderBottom ? 'box-border-bottom' : ''}`} key={`${rowIndex}-${colIndex}`} onClick={() => {
+                            <div className={`sudoku-cell ${cellClass} ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? (cell !== null ? 'selected-filled' : 'selected') : ''} ${borderRight ? 'box-border-right' : ''} ${borderBottom ? 'box-border-bottom' : ''} ${conflict ? 'conflict' : ''}`} key={`${rowIndex}-${colIndex}`} onClick={() => {
                                 if (game.puzzle[rowIndex][colIndex] === null) {
                                     setSelectedCell({ row: rowIndex, col: colIndex });
                                 }

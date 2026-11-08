@@ -45,7 +45,7 @@ export function generateSolvedBoard(gridSize) {
     for (let i = 0; i < gridSize; i += boxCols) {
         const col1 = i + Math.floor(Math.random() * boxCols);
         const col2 = i + Math.floor(Math.random() * boxCols);
-        console.log(`Swapping columns ${col1} and ${col2}`);
+        //console.log(`Swapping columns ${col1} and ${col2}`);
         for (let j = 0; j < gridSize; j++) {
             [board[j][col1], board[j][col2]] = [board[j][col2], board[j][col1]];
         }
@@ -75,6 +75,6 @@ export function generateSolvedBoard(gridSize) {
             }
         }
     }
-    console.log("Is the generated board valid?", isBoardValid);
+    //console.log("Is the generated board valid?", isBoardValid);
     return board;
 }
