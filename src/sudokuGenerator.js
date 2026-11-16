@@ -1,19 +1,10 @@
-function shuffleNumbers(numbers) {
-    const shuffled = [...numbers];
-
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    return shuffled;
-}
+import { shuffleArray } from "./shuffleArray.js";
 
 export function generateSolvedBoard(gridSize) {
     const size = gridSize;
     let numbers = Array.from({ length: size }, (_, i) => i + 1); // [1, 2, 3, 4, 5, 6, 7, 8, 9]
     //console.log("Grid size:", gridSize);
-    numbers = shuffleNumbers(numbers); // Shuffle the numbers
+    numbers = shuffleArray(numbers); // Shuffle the numbers
 
     // Create board initialized with null values
     const board = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
@@ -34,7 +25,7 @@ export function generateSolvedBoard(gridSize) {
 
     for (let i = 0; i < gridSize; i += boxRows) {
         const rows = board.slice(i, i + boxRows);
-        const shuffledRows = shuffleNumbers(rows);
+        const shuffledRows = shuffleArray(rows);
 
         for (let j = 0; j < boxRows; j++) {
             board[i + j] = shuffledRows[j];

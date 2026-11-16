@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './SudokuBoard.css';
 import { generateSolvedBoard } from '../sudokuGenerator';
 import { createPuzzle } from '../sudokuPuzzle';
 import { checkSolution, hasConflict } from '../sudokuValidator';
-
+import { countSolutions } from '../sudokuSolver';
 
 function createGame(size, difficulty) {
     const solution = generateSolvedBoard(size);
@@ -25,6 +25,12 @@ function SudokuBoard() {
     const [selectedCell, setSelectedCell] = useState(null);
     const [feedback, setFeedback] = useState('');
     const [feedbackType, setFeedbackType] = useState(null); // New state for feedback type
+    const [seconds, setSeconds] = useState(0);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const formattedTime = `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+    const [isGameComplete, setIsGameComplete] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
 
     function startNewGame(size, selectedDifficulty) {
         setFeedback(''); // Clear feedback when starting a new game
@@ -35,7 +41,20 @@ function SudokuBoard() {
         setGame({ solution, puzzle });
         setBoard(puzzle);
         setSelectedCell(null); // Deselect any selected cell when starting a new game
+        setSeconds(0); // Restart timer
+        setIsGameComplete(false);
+        setIsPaused(false);
     }
+    useEffect(() => {
+        if (isGameComplete || isPaused) return;
+
+        const timer = setInterval(() => {
+            setSeconds(prevSeconds => prevSeconds + 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [isGameComplete, isPaused]);
+
     return (
         <>
             <div className="grid-size-selector">
@@ -64,40 +83,57 @@ function SudokuBoard() {
                     Hard
                 </button>
             </div>
-            <div className="sudoku-board" style={{ '--grid-size': gridSize }}>
-                {board.map((row, rowIndex) => (
-                    row.map((cell, colIndex) => {
-                        const cellClass = game.puzzle[rowIndex][colIndex] !== null ? 'pre-filled' : cell !== null ? 'filled' : 'empty';
-                        const conflict = cell !== null &&
-                            hasConflict(board, rowIndex, colIndex, cell);
-                        const boxRows = gridSize / 3;
-                        const boxCols = 3;
+            <p>Time: {formattedTime}</p><button
+                className='pause-button'
+                onClick={() => setIsPaused(prev => !prev)}
+                disabled={isGameComplete}
+            >
+                {isPaused ? "Resume" : "Pause"}
+            </button>
 
-                        const borderRight =
-                            (colIndex + 1) % boxCols === 0 &&
-                            colIndex !== gridSize - 1;
+            <div className='board-container'>
+                <div className={`sudoku-board ${isPaused ? 'paused' : ''}`}
+                    style={{ '--grid-size': gridSize }}>
+                    {board.map((row, rowIndex) => (
+                        row.map((cell, colIndex) => {
+                            const cellClass = game.puzzle[rowIndex][colIndex] !== null ? 'pre-filled' : cell !== null ? 'filled' : 'empty';
+                            const conflict = cell !== null &&
+                                hasConflict(board, rowIndex, colIndex, cell);
+                            const boxRows = gridSize / 3;
+                            const boxCols = 3;
 
-                        const borderBottom =
-                            (rowIndex + 1) % boxRows === 0 &&
-                            rowIndex !== gridSize - 1;
+                            const borderRight =
+                                (colIndex + 1) % boxCols === 0 &&
+                                colIndex !== gridSize - 1;
 
-                        return (
-                            <div className={`sudoku-cell ${cellClass} ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? (cell !== null ? 'selected-filled' : 'selected') : ''} ${borderRight ? 'box-border-right' : ''} ${borderBottom ? 'box-border-bottom' : ''} ${conflict ? 'conflict' : ''}`} key={`${rowIndex}-${colIndex}`} onClick={() => {
-                                if (game.puzzle[rowIndex][colIndex] === null) {
-                                    setSelectedCell({ row: rowIndex, col: colIndex });
-                                }
-                            }}>
-                                {cell}
-                            </div>
-                        );
-                    })
-                ))
-                }
-            </div >
-            <div className={`number-pad number-pad-${gridSize}`}>
+                            const borderBottom =
+                                (rowIndex + 1) % boxRows === 0 &&
+                                rowIndex !== gridSize - 1;
+
+                            return (
+                                <div className={`sudoku-cell ${cellClass} ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? (cell !== null ? 'selected-filled' : 'selected') : ''} ${borderRight ? 'box-border-right' : ''} ${borderBottom ? 'box-border-bottom' : ''} ${conflict ? 'conflict' : ''}`} key={`${rowIndex}-${colIndex}`} onClick={() => {
+                                    if (game.puzzle[rowIndex][colIndex] === null) {
+                                        setSelectedCell({ row: rowIndex, col: colIndex });
+                                    }
+                                }}>
+                                    {cell}
+                                </div>
+                            );
+                        })
+                    ))
+                    }
+                </div >
+                {isPaused && (
+                    <div className='pause-overlay'>
+                        <p>Game paused</p>
+                    </div>
+                )}
+            </div>
+
+            <div className={`number-pad number-pad-${gridSize} ${isPaused ? 'paused' : ''}`}>
                 {Array.from({ length: gridSize }, (_, i) => i + 1).map((number) => (
                     <button key={number} onClick={() => {
-                        if (selectedCell && game.puzzle[selectedCell.row][selectedCell.col] === null) {
+                        if (!isGameComplete && selectedCell && game.puzzle[selectedCell.row][selectedCell.col] === null) {
                             const newBoard = board.map(row => [...row]);
                             newBoard[selectedCell.row][selectedCell.col] = number;
                             setBoard(newBoard);
@@ -106,8 +142,9 @@ function SudokuBoard() {
                             setFeedbackType(null); // Clear feedback type when placing a number
 
                             if (checkSolution(newBoard, game.solution)) {
-                                setFeedback('Congratulations! You solved the puzzle!');
+                                setFeedback(`Congratulations! You solved the puzzle in ${formattedTime}!`);
                                 setFeedbackType('success'); // Set feedback type to success
+                                setIsGameComplete(true);
                             }
                         }
                     }}>
@@ -128,26 +165,16 @@ function SudokuBoard() {
                 </button>
 
             </div>
-            <div className="game-actions">
+            <div className={`game-actions ${isPaused ? 'paused' : ''}`}>
                 <button className="reset-board" onClick={() => {
                     const newBoard = game.puzzle.map(row => [...row]);
                     setFeedback(''); // Clear feedback when resetting the board
                     setFeedbackType(null); // Clear feedback type when resetting the board
                     setBoard(newBoard);
-                    setSelectedCell(null); // Deselect the cell after resetting
-                }}>
+                    setSelectedCell(null); // Deselect the cell after resetting 
+                }}
+                disabled={isGameComplete}>
                     Reset
-                </button>
-                <button className="check-solution" onClick={() => {
-                    if (checkSolution(board, game.solution)) {
-                        setFeedback('Congratulations! You solved the puzzle!');
-                        setFeedbackType('success'); // Set feedback type to success
-                    } else {
-                        setFeedback('The solution is incorrect. Please try again.');
-                        setFeedbackType('error'); // Set feedback type to error
-                    }
-                }}>
-                    Check Solution
                 </button>
             </div>
             <p className={`feedback ${feedbackType}`}>{feedback}</p>

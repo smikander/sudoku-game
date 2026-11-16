@@ -1,12 +1,16 @@
 .sudoku-board {
-  --cell-size: min(60px, calc((100vw - 32px) / var(--grid-size)));
+  --cell-size: min(60px, calc((100cqw - 32px) / var(--grid-size)));
   display: grid;
   grid-template-columns: repeat(var(--grid-size), var(--cell-size));
   grid-template-rows: repeat(var(--grid-size), var(--cell-size));
   justify-content: center;
-  margin: 30px auto;
+  margin: 20px auto 10px;
   width: max-content;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.sudoku-board.paused {
+    visibility: hidden;
 }
 
 .sudoku-cell {
@@ -56,6 +60,9 @@
   gap: 10px;
   margin-top: 20px;
 }
+.number-pad.paused {
+  visibility: hidden;
+}
 
 .number-pad button {
   width: 45px;
@@ -70,9 +77,10 @@
   gap: 15px;
   margin-top: 20px;
 }
-
-.reset-board,
-.check-solution {
+.game-actions.paused {
+  visibility: hidden;
+}
+.reset-board {
   min-width: 150px;
   height: 45px;
   padding: 10px 16px;
@@ -90,7 +98,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background-color: #d4c2eb;
   transform: scale(1.05);
 }
@@ -146,6 +154,33 @@ button:hover {
 .sudoku-cell.conflict.selected-filled {
     outline: 3px solid #6b4f9c;
     outline-offset: -3px;
+}
+.board-container {
+    position: relative;
+    container-type: inline-size;
+    width: 100%;
+}
+
+.pause-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.pause-button {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid #d5bdf5;
+    border-radius: 8px;
+    background-color: #eee4f7;
+    color: #392b50;
+    cursor: pointer;
+}
+
+.pause-button:hover:not(:disabled) {
+    background-color: #d9c7ee;
 }
 
 /* Media queries for responsiveness */
