@@ -41,6 +41,22 @@ export function generateSolvedBoard(gridSize) {
             [board[j][col1], board[j][col2]] = [board[j][col2], board[j][col1]];
         }
     }
+    // Shuffle entire column groups
+    const columnGroups = [];
+
+    for (let i = 0; i < gridSize; i += boxCols) {
+        columnGroups.push([i, i + 1, i + 2]);
+    }
+
+    const shuffledColumnGroups = shuffleArray(columnGroups);
+    const shuffledColumns = shuffledColumnGroups.flat();
+
+    for (let row = 0; row < gridSize; row++) {
+        const newRow = shuffledColumns.map(col => board[row][col]);
+        board[row] = newRow;
+    }
+    console.log(shuffledColumns);
+    
 
     const isValidRow = (row) => new Set(row).size === gridSize;
     const isValidColumn = (board, colIndex) => {
