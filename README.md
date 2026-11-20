@@ -1,16 +1,70 @@
-# React + Vite
+# Sudoku Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive Sudoku game built with React and JavaScript.
 
-Currently, two official plugins are available:
+The game supports both 6×6 and 9×9 Sudoku grids, multiple difficulty levels, and randomly generated puzzles with unique solutions.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- 6×6 and 9×9 Sudoku grids
+- Three difficulty levels: Easy, Medium, and Hard
+- Randomized puzzle generation using a backtracking algorithm
+- Unique solution validation
+- Conflict highlighting for invalid number placements
+- Timer with pause and resume functionality
+- Reset functionality
+- Responsive user interface
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Technologies
 
-## Expanding the ESLint configuration
+- React
+- JavaScript
+- CSS
+- Vite
+- Vitest
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+Clone the repository and install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open the local URL displayed in the terminal.
+
+## Testing
+
+The project uses Vitest for automated testing.
+
+Run the tests:
+
+```bash
+npm run test -- --run
+```
+
+The tests cover Sudoku grid generation, puzzle creation, conflict detection, and solution counting.
+
+## Production Build
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## Project Purpose
+
+This project was developed to practice React development, JavaScript algorithms, recursion, backtracking, and automated testing.
